@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dazn.codeassignment.epg.domain.usecase.SchedulesUseCase
 import com.dazn.codeassignment.epg.utils.Resource
+import com.dazn.codeassignment.epg.utils.convertDate
+import com.dazn.codeassignment.epg.utils.getFakeEventsList
+import com.dazn.codeassignment.epg.utils.getFakeSchedulesList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -26,7 +29,7 @@ class SchedulesViewModel @Inject constructor(private val schedulesUseCase: Sched
         getSchedules()
     }
 
-     fun getSchedules() {
+    fun getSchedules() {
 
         schedulesUseCase().onEach { result ->
 
@@ -42,8 +45,12 @@ class SchedulesViewModel @Inject constructor(private val schedulesUseCase: Sched
                 is Resource.Success -> {
                     _schedules.postValue(schedulesScreenState.apply {
                         loading = false
-                        result.data?.let {list->
-                            schedulesList = list
+                        result.data?.let { list ->
+                            schedulesList = list.sortedWith(compareBy { schedule -> schedule.date })
+                                .map { schedule ->
+                                    schedule.date = convertDate(schedule.date)
+                                    schedule
+                                }
                         }
                         error = ""
                     })

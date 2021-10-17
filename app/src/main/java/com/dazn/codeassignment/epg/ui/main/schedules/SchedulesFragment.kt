@@ -6,10 +6,13 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.RecyclerView.ItemAnimator
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.dazn.codeassignment.epg.databinding.FragmentSchedulesBinding
 import com.dazn.codeassignment.epg.ui.base.BaseBindingFragment
 import com.dazn.codeassignment.epg.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
+
 
 private const val TAG = "SchedulesFragment"
 
@@ -34,6 +37,14 @@ class SchedulesFragment : BaseBindingFragment<FragmentSchedulesBinding>() {
     override fun initView() {
 
         binding.recyclerSchedules.adapter = adapter
+
+        // prevent recycler from flickering while refreshing data
+        binding.recyclerSchedules.itemAnimator?.let { animator->
+            if (animator is SimpleItemAnimator) {
+                animator.supportsChangeAnimations = false
+            }
+        }
+
         viewModel.schedules.observe(viewLifecycleOwner, { state ->
 
             when {

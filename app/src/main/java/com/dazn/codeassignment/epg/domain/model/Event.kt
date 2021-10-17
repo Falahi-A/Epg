@@ -2,7 +2,7 @@ package com.dazn.codeassignment.epg.domain.model
 
 
 data class Event(
-    val date: String,
+    var date: String,
     val id: String,
     val imageUrl: String,
     val subtitle: String,

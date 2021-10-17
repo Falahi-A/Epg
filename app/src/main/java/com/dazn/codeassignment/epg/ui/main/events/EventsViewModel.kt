@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dazn.codeassignment.epg.domain.usecase.EventsUseCase
 import com.dazn.codeassignment.epg.utils.Resource
+import com.dazn.codeassignment.epg.utils.convertDate
+import com.dazn.codeassignment.epg.utils.getFakeEventsList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -19,13 +21,12 @@ class EventsViewModel @Inject constructor(private val eventsUseCase: EventsUseCa
     private val eventsScreenState = EventsScreenState(false, emptyList(), "")
 
 
-
     init {
         getEvents()
     }
 
-     fun getEvents() {
-         eventsUseCase().onEach { result ->
+    fun getEvents() {
+        eventsUseCase().onEach { result ->
             when (result) {
 
                 is Resource.Loading -> {
@@ -36,10 +37,16 @@ class EventsViewModel @Inject constructor(private val eventsUseCase: EventsUseCa
                     })
                 }
                 is Resource.Success -> {
+
                     _eventsState.postValue(eventsScreenState.apply {
                         loading = false
-                        result.data?.let {
-                            eventsList = it
+                        result.data?.let { list ->
+                            eventsList =
+                                list.sortedWith(compareBy { event -> event.date }).map { event ->
+                                    event.date = convertDate(event.date)
+                                    event
+                                }
+
                         }
                         error = ""
                     })
