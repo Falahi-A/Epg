@@ -21,16 +21,12 @@ class EventsViewModel @Inject constructor(private val eventsUseCase: EventsUseCa
     private val eventsScreenState = EventsScreenState(false, emptyList(), "")
 
 
-    init {
-        getEvents()
-    }
-
-    fun getEvents() {
+    fun getEvents() =
         eventsUseCase().onEach { result ->
             when (result) {
 
                 is Resource.Loading -> {
-                    _eventsState.postValue(eventsScreenState.apply {
+                    _eventsState.value=(eventsScreenState.apply {
                         loading = true
                         eventsList = emptyList()
                         error = ""
@@ -38,7 +34,7 @@ class EventsViewModel @Inject constructor(private val eventsUseCase: EventsUseCa
                 }
                 is Resource.Success -> {
 
-                    _eventsState.postValue(eventsScreenState.apply {
+                    _eventsState.value=(eventsScreenState.apply {
                         loading = false
                         result.data?.let { list ->
                             eventsList =
@@ -52,7 +48,7 @@ class EventsViewModel @Inject constructor(private val eventsUseCase: EventsUseCa
                     })
                 }
                 is Resource.Error -> {
-                    _eventsState.postValue(eventsScreenState.apply {
+                    _eventsState.value=(eventsScreenState.apply {
                         loading = false
                         eventsList = emptyList()
                         error = result.message ?: "an unexpected error occurred"
@@ -63,5 +59,5 @@ class EventsViewModel @Inject constructor(private val eventsUseCase: EventsUseCa
             }
         }.launchIn(viewModelScope)
 
-    }
+
 }

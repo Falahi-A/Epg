@@ -34,6 +34,9 @@ class EventsFragment : BaseBindingFragment<FragmentEventsBinding>() {
         }
 
     override fun initView() {
+
+        getEventsList()
+
         binding.recyclerEvents.adapter = adapter
 
         viewModel.eventsState.observe(viewLifecycleOwner, { state ->
@@ -51,7 +54,7 @@ class EventsFragment : BaseBindingFragment<FragmentEventsBinding>() {
                         displayCustomErrorView(true)
                         getCustomErrorView().setError(state.error)
                         getCustomErrorView().setReloadListener {
-                            viewModel.getEvents()
+                            getEventsList()
                         }
                     }
 
@@ -70,5 +73,9 @@ class EventsFragment : BaseBindingFragment<FragmentEventsBinding>() {
         })
 
     }
+
+    private fun getEventsList() =
+        viewModel.getEvents()
+
 
 }

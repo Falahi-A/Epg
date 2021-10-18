@@ -17,8 +17,8 @@ import java.io.IOException
  */
 class FakeEpgRepository : EpgRepository {
 
-    private lateinit var eventsList: List<EventNetResponse>
-    private lateinit var schedulesList: List<ScheduleNetResponse>
+    private val eventsList = ArrayList<EventNetResponse>()
+    private val schedulesList = ArrayList<ScheduleNetResponse>()
     private var hasSchedules = false // if it is true the Schedules list become filled
     private var hasEvents = false // if it is true the events list become filled
     private var hasHttpException = false // if it is true methods throw an httpException
@@ -92,7 +92,7 @@ class FakeEpgRepository : EpgRepository {
     }
 
     private fun createEventsList(): List<EventNetResponse> {
-        eventsList = ArrayList()
+        eventsList.clear()
         for (i: Int in 0 until size) {
             (eventsList as ArrayList<EventNetResponse>).add(
                 EventNetResponse(
@@ -110,7 +110,7 @@ class FakeEpgRepository : EpgRepository {
     }
 
     private fun createSchedulesList(): List<ScheduleNetResponse> {
-        schedulesList = ArrayList()
+        schedulesList.clear()
         for (i: Int in 0 until size) {
             (schedulesList as ArrayList<ScheduleNetResponse>).add(
                 ScheduleNetResponse(

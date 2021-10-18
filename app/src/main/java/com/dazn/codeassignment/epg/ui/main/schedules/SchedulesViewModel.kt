@@ -25,9 +25,6 @@ class SchedulesViewModel @Inject constructor(private val schedulesUseCase: Sched
 
     private val schedulesScreenState = SchedulesScreenState()
 
-    init {
-        getSchedules()
-    }
 
     fun getSchedules() {
 
@@ -36,14 +33,14 @@ class SchedulesViewModel @Inject constructor(private val schedulesUseCase: Sched
             when (result) {
 
                 is Resource.Loading -> {
-                    _schedules.postValue(schedulesScreenState.apply {
+                    _schedules.value = (schedulesScreenState.apply {
                         loading = true
                         schedulesList = emptyList()
                         error = ""
                     })
                 }
                 is Resource.Success -> {
-                    _schedules.postValue(schedulesScreenState.apply {
+                    _schedules.value = (schedulesScreenState.apply {
                         loading = false
                         result.data?.let { list ->
                             schedulesList = list.sortedWith(compareBy { schedule -> schedule.date })
@@ -56,7 +53,7 @@ class SchedulesViewModel @Inject constructor(private val schedulesUseCase: Sched
                     })
                 }
                 is Resource.Error -> {
-                    _schedules.postValue(schedulesScreenState.apply {
+                    _schedules.value = (schedulesScreenState.apply {
                         loading = false
                         schedulesList = emptyList()
                         error = result.message ?: "an unexpected error occurred"

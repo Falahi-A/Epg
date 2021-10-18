@@ -36,10 +36,12 @@ class SchedulesFragment : BaseBindingFragment<FragmentSchedulesBinding>() {
 
     override fun initView() {
 
+        getSchedulesList()
+
         binding.recyclerSchedules.adapter = adapter
 
         // prevent recycler from flickering while refreshing data
-        binding.recyclerSchedules.itemAnimator?.let { animator->
+        binding.recyclerSchedules.itemAnimator?.let { animator ->
             if (animator is SimpleItemAnimator) {
                 animator.supportsChangeAnimations = false
             }
@@ -60,7 +62,7 @@ class SchedulesFragment : BaseBindingFragment<FragmentSchedulesBinding>() {
                         displayCustomErrorView(true)
                         getCustomErrorView().setError(state.error)
                         getCustomErrorView().setReloadListener {
-                            viewModel.getSchedules()
+                            getSchedulesList()
                         }
                     }
                 }
@@ -85,7 +87,7 @@ class SchedulesFragment : BaseBindingFragment<FragmentSchedulesBinding>() {
      */
     private fun refreshList(milliSeconds: Long) {
         runnable = Runnable {
-            viewModel.getSchedules()
+            getSchedulesList()
             refreshList(milliSeconds)
         }
         handler = Handler(Looper.getMainLooper()).apply {
@@ -96,6 +98,10 @@ class SchedulesFragment : BaseBindingFragment<FragmentSchedulesBinding>() {
     override fun onDestroy() {
         handler.removeCallbacks(runnable)
         super.onDestroy()
+    }
+
+    fun getSchedulesList() {
+        viewModel.getSchedules()
     }
 
 }
